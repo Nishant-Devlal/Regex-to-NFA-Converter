@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Regular Expression to NFA Converter</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="icon" type="image/png" href="favicon.png">
+</head>
+
+<body>
+    <header class="header">
+        <div class="container header-content">
+            <div class="logo">
+                <h1>Regex → NFA</h1>
+                <p>Thompson's Construction</p>
+            </div>
+
+            <nav class="navbar">
+                <a href="#converter">Converter</a>
+                <a href="#instructions">Instructions</a>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <section class="hero">
+            <div class="container">
+                <h2>Regular Expression to NFA Converter</h2>
+                <p>Convert a regular expression into an equivalent ε-NFA using Thompson's Construction.</p>
+            </div>
+        </section>
+
+        <section id="converter" class="converter-section">
+            <div class="container">
+                <div class="converter-card">
+                    <div class="section-heading">
+                        <h2>Enter Regular Expression</h2>
+                        <p>Enter a regular expression using union (+), concatenation, Kleene star (*) and parentheses.</p>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="regexInput"> Regular Expression </label>
+                        <div class="input-row">
+                            <input
+                                type="text"
+                                id="regexInput"
+                                placeholder="Example: (a+b)*abb"
+                                autocomplete="off"
+                                spellcheck="false"
+                                aria-describedby="regexHelp"
+                            >
+                            <button id="convertBtn" type="button"> Convert to NFA </button>
+                        </div>
+
+                        <small id="regexHelp">
+                            Use + for union, * for Kleene star,
+                            and parentheses for grouping.
+                            Concatenation is written implicitly,
+                            for example ab.
+                        </small>
+                    </div>
+
+                    <div class="operators">
+                        <h3>Supported Operators</h3>
+                        <div class="operator-list">
+                            <div class="operator">
+                                <span class="operator-symbol">+</span>
+                                <span>Union</span>
+                            </div>
+
+                            <div class="operator">
+                                <span class="operator-symbol">·</span>
+                                <span>Concatenation</span>
+                            </div>
+
+                            <div class="operator">
+                                <span class="operator-symbol">*</span>
+                                <span>Kleene Star</span>
+                            </div>
+
+                            <div class="operator">
+                                <span class="operator-symbol">( )</span>
+                                <span>Grouping</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div id="errorMessage" class="message error-message hidden" role="alert" aria-live="polite"></div>
+
+                    <div id="processingSection" class="result-section hidden">
+                        <div class="section-heading">
+                            <h2>Regular Expression Processing</h2>
+                            <p>Intermediate representations used during Thompson's Construction.</p>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Tokens</h3>
+                            <div id="tokensOutput" class="output-box"> - </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Explicit Concatenation</h3>
+                            <div id="concatenatedOutput" class="output-box"> - </div>
+                        </div>
+
+                        <div class="result-card">
+                            <h3>Postfix Expression</h3>
+                            <div id="postfixOutput" class="output-box"> - </div>
+                        </div>
+                    </div>
+
+                    <div id="nfaSection" class="result-section hidden">
+                        <div class="section-heading">
+                            <h2>Generated ε-NFA</h2>
+                            <p>Equivalent ε-NFA generated using Thompson's Construction.</p>
+                        </div>
+
+                        <div class="nfa-info">
+                            <div class="info-card">
+                                <span class="info-label"> States </span>
+                                <span id="stateCount" class="info-value"> 0 </span>
+                            </div>
+
+                            <div class="info-card">
+                                <span class="info-label"> Alphabet </span>
+                                <span id="alphabetOutput" class="info-value"> - </span>
+                            </div>
+
+                            <div class="info-card">
+                                <span class="info-label"> Start State </span>
+                                <span id="startStateOutput" class="info-value"> - </span>
+                            </div>
+
+                            <div class="info-card">
+                                <span class="info-label"> Final State </span>
+                                <span id="finalStateOutput" class="info-value"> - </span>
+                            </div>
+                        </div>
+
+                        <div class="nfa-graph-container">
+                            <div class="graph-header">
+                                <h3>NFA Transition Graph</h3>
+                            </div>
+
+                            <div id="nfaGraph" class="nfa-graph" role="region" aria-label="Generated NFA diagram">
+                                <div class="graph-placeholder">
+                                    <div class="placeholder-icon"> ε </div>
+                                    <p>Your generated NFA will appear here.</p>
+                                </div>
+                            </div>
+
+                        </div>
+
+                        <div class="transition-container">
+                            <div class="graph-header">
+                                <h3>Transition Table</h3>
+                            </div>
+
+                            <div class="table-wrapper">
+                                <table id="transitionTable">
+                                    <thead>
+                                        <tr>
+                                            <th>From</th>
+                                            <th>Symbol</th>
+                                            <th>To</th>
+                                        </tr>
+                                    </thead>
+
+                                    <tbody id="transitionBody">
+                                        <tr>
+                                            <td colspan="3"> No transitions generated yet. </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="instructions" class="instructions-section">
+            <div class="container">
+                <div class="instructions-card">
+                    <div class="section-heading">
+                        <h2>How It Works</h2>
+                        <p> The converter follows the steps of Thompson's Construction.</p>
+                    </div>
+
+                    <div class="steps">
+                        <div class="step">
+                            <div class="step-number"> 1 </div>
+                            <div class="step-content">
+                                <h3>Enter Regular Expression</h3>
+                                <p>Enter a regular expression using the supported operators.</p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number"> 2 </div>
+                            <div class="step-content">
+                                <h3>Process Expression</h3>
+                                <p> The expression is tokenized and converted into postfix notation.</p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number"> 3 </div>
+                            <div class="step-content">
+                                <h3>Apply Thompson's Construction</h3>
+                                <p>The postfix expression is converted into an equivalent ε-NFA.</p>
+                            </div>
+                        </div>
+
+                        <div class="step">
+                            <div class="step-number"> 4 </div>
+                            <div class="step-content">
+                                <h3>View the NFA</h3>
+                                <p>The generated states and transitions are displayed as an NFA.</p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="syntax-section">
+                        <h3>Regular Expression Syntax</h3>
+                        <div class="syntax-table-wrapper">
+                            <table class="syntax-table">
+                                <thead>
+                                    <tr>
+                                        <th>Operator</th>
+                                        <th>Meaning</th>
+                                        <th>Example</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+                                    <tr>
+                                        <td><code>+</code></td>
+                                        <td>Union</td>
+                                        <td><code>a+b</code></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td>Concatenation</td>
+                                        <td>Sequence</td>
+                                        <td><code>ab</code></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><code>*</code></td>
+                                        <td>Kleene Star</td>
+                                        <td><code>a*</code></td>
+                                    </tr>
+
+                                    <tr>
+                                        <td><code>( )</code></td>
+                                        <td>Grouping</td>
+                                        <td><code>(a+b)</code></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <p>Regular Expression → NFA Converter</p>
+            <p>Thompson's Construction</p>
+        </div>
+    </footer>
+
+    <script src="js/regexParser.js"></script>
+    <script src="js/thompson.js"></script>
+    <script src="js/nfaRenderer.js"></script>
+    <script src="js/main.js"></script>
+</body>
+
+</html>
