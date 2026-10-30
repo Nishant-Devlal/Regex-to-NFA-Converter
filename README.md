@@ -1,8 +1,15 @@
 # Regular Expression to Non Deterministic Finite Automata (NFA) Converter
-In this project, I have made a regular expression to NFA converter using HTML, CSS and Javascript.  
-User will have to enter regular expression.  
-If the regular expression is valid, the output will be an NFA state diagram based on the input.   
-This converter follows Thompsons construction rules.  
+In this project, I have made a web based tool that converts regular expression to NFA using HTML, CSS and Javascript.  
+- User will have to enter regular expression.  
+- If the regular expression is valid, the output will be an NFA state diagram based on the input.   
+- This converter follows Thompson's construction rules.  
+- Generates ɛ transitions.  
+
+## Supported Operators
+- Union a+b
+- Concatenation ab
+- Kleene Star a*
+- Grouping (a+b)*
 
 ## Screenshots
 1. Input regular expression  
